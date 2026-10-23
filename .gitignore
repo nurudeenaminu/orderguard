@@ -1,0 +1,40 @@
+# Virtual environment
+.venv/
+
+# Python cache
+__pycache__/
+*.py[cod]
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Local datasets
+data/raw/*
+data/processed/*
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+
+# Model artifacts
+artifacts/*
+!artifacts/.gitkeep
+
+# Generated reports and local predictions
+reports/figures/*
+reports/*.csv
+reports/*.txt
+
+# Test caches
+.pytest_cache/
+
+# Environment variables and credentials
+.env
+.env.*
+!.env.example
+
+# MLflow local tracking
+mlruns/
+
+# Editor and operating system files
+.vscode/
+.DS_Store
+Thumbs.db
