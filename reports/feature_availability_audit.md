@@ -6,19 +6,30 @@ Working assumption: score an order after checkout, once order contents are final
 
 This timing must be confirmed against the eventual operational workflow.
 
-## Feature Review
+## Feature Availability Review
 
-| Feature                             | Source                                           | Status                         | Required verification                                                                                                         |
-| ----------------------------------- | ------------------------------------------------ | ------------------------------ | ----------------------------------------------------------------------------------------------------------------------------- |
-| purchase_month                      | Order purchase timestamp                         | Derivation verified            | Confirm timestamp is available when scoring occurs                                                                            |
-| customer_state                      | Customer table joined through customer_id        | Conditional                    | Confirm state represents the order-associated address at prediction time                                                      |
-| item_price_mean                     | Order-item price aggregation                     | Conditional                    | Confirm item lines and prices are finalized by prediction time                                                                |
-| item_price_max                      | Order-item price aggregation                     | Conditional                    | Confirm item lines and prices are finalized by prediction time                                                                |
-| distinct_sellers                    | Distinct seller IDs per order                    | Conditional                    | Confirm all order-item seller assignments are known                                                                           |
-| dominant_seller_state               | Mode of seller states across order items         | Conditional                    | Confirm all order-item seller assignments are known                                                                           |
-| seller_customer_same_state_fraction | Derived from seller and customer states per item | Conditional                    | Confirm all dependencies are known at scoring time                                                                            |
-| payment_value_sum                   | Payment value aggregation                        | Excluded from current champion | Timing remains unverified; establish when payment records and final amounts become available before reconsidering the feature |
-|  |
+Intended prediction moment: after checkout and after order contents are finalized, but before fulfillment and delivery outcomes occur.
+
+| Feature                             | Source / derivation                                              | Status                         | Remaining requirement                                                                               |
+| ----------------------------------- | ---------------------------------------------------------------- | ------------------------------ | --------------------------------------------------------------------------------------------------- |
+| purchase_month                      | Month extracted from order_purchase_timestamp                    | Derivation verified            | Confirm the timestamp is available when scoring occurs                                              |
+| customer_state                      | Customer table joined through customer_id                        | Conditional                    | Confirm this is the address associated with the order at prediction time                            |
+| item_price_mean                     | Mean of price from order-item rows                               | Conditional                    | Confirm order items and prices are finalized before scoring                                         |
+| item_price_max                      | Maximum price from order-item rows                               | Conditional                    | Confirm order items and prices are finalized before scoring                                         |
+| distinct_sellers                    | Number of distinct seller IDs per order                          | Conditional                    | Confirm the complete order-item list is available                                                   |
+| dominant_seller_state               | Most frequent seller state across order items                    | Conditional                    | Confirm seller assignments and relevant seller data are available                                   |
+| seller_customer_same_state_fraction | Fraction of order items with matching customer and seller states | Conditional                    | Confirm all source values are available before fulfillment                                          |
+| payment_value_sum                   | Payment records aggregated by order                              | Excluded from current champion | Timing remains unverified; reconsider only if availability is established and value is demonstrated |
+
+## Audit Conclusion
+
+The static dataset builder confirms how the selected features are constructed. It does not, by itself, prove when every source value becomes available.
+
+The purchase-month derivation is consistent with the intended prediction time. The customer, seller, and order-item features remain conditional until their availability is confirmed against the operational data contract.
+
+payment_value_sum is excluded from the current champion because chronological ablation showed negligible ranking differences and its point-in-time availability remains unverified.
+
+The current model is a research prototype, not a production-approved system. Do not describe the feature-availability audit as fully passed.
 
 ## Target Definition
 
